@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import main from "@/view/main";
 
 const modulesFiles = require.context("./module", true, /\.js$/);
-console.log("modulesFiles", modulesFiles);
 const modules = modulesFiles.keys().reduce((modules, modulePath) => {
   const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, "$1");
   const value = modulesFiles(modulePath);

@@ -12,6 +12,7 @@
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
 // import Stats from 'three/examples/js/libs/stats.min.js'
 export default {
   name: "BasicsThree",
@@ -124,7 +125,7 @@ export default {
     renderFn: function () {
       requestAnimationFrame(this.renderFn);
       this.controls.update();
-      this.stats.update();
+      // this.stats.update();
       this.renderer.render(this.scene, this.camera);
     },
   },

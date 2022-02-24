@@ -4,7 +4,7 @@
  * @Description:
 -->
 <template>
-  <div>
+  <div class="main">
     <nav class="routes">
       <div v-for="(el, i) in routeType" :key="i" class="route_type">
         <div class="route_title">{{ el }}</div>
@@ -35,7 +35,6 @@ export default {
     // console.log(this.$router.options.routes)
     // debugger
     let lastType = "111";
-    console.log("this.$router.options.routes", this.$router.options.routes);
     this.$router.options.routes[0].children.forEach((item) => {
       if (item.meta.type && item.meta.type !== lastType) {
         lastType = item.meta.type;
@@ -45,48 +44,57 @@ export default {
       this.routes[lastType].push(item);
       // this.routes.push(item)
     });
-    console.log("this.routes", this.routes);
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss">
+.main {
+  position: relative;
+  display: flex;
+  height: 100%;
+}
 .routes {
   background: #1e2c30;
   width: 200px;
   padding: 10px;
+  .route_type {
+    /* display: flex; */
+    font-size: 16px;
+    color: #fafffa;
+  }
+  .route_type:hover .routes_list {
+    display: block;
+  }
+  .route_title {
+    width: 100px;
+    line-height: 40px;
+  }
+
+  .routes_list {
+    display: block;
+    margin: 5px 0;
+    padding: 0;
+  }
+  .routes_list li {
+    padding-left: 30px;
+    line-height: 30px;
+    list-style: none;
+  }
+  .routes_list :hover {
+    background: #04536d;
+  }
+  .routes_list a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    text-decoration: none;
+    color: #fafffa;
+  }
 }
-.route_type {
-  /* display: flex; */
-  font-size: 16px;
-  color: #fafffa;
-}
-.route_title {
-  width: 100px;
-  line-height: 40px;
-}
-.route_type:hover .routes_list {
-  display: block;
-}
-.routes_list {
-  display: block;
-  margin: 5px 0;
-  padding: 0;
-}
-.routes_list li {
-  padding-left: 30px;
-  line-height: 30px;
-  list-style: none;
-}
-.routes_list :hover {
-  background: #04536d;
-}
-.routes_list a {
-  display: block;
-  width: 100%;
-  height: 100%;
-  font-size: 16px;
-  text-decoration: none;
-  color: #fafffa;
+article {
+  flex: 1;
+  padding: 20px;
 }
 </style>
