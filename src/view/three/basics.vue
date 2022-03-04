@@ -12,17 +12,19 @@
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import Stats from "three/examples/js/libs/stats.min.js";
 
-// import Stats from 'three/examples/js/libs/stats.min.js'
+// import "three/examples/js/libs/fflate.min.js";
+var scene, mesh;
 export default {
   name: "BasicsThree",
   data() {
     return {
-      scene: null,
+      // scene: null,
       camera: null,
       renderer: null,
       controls: null,
-      // stats: null
+      // stats: null,
     };
   },
   mounted() {
@@ -31,7 +33,7 @@ export default {
     this.initCamera(); // 相机
     this.initLight(); // 灯光
     this.initControls(); // 轨道控制器
-    // this.initStats() // 性能控件
+    // this.initStats(); // 性能控件
     this.initCoord(); // 坐标系
     this.createMesh(); // 创建模型
     this.renderFn(); // 渲染刷新
@@ -39,7 +41,7 @@ export default {
   methods: {
     /** 初始化场景 */
     initScene() {
-      this.scene = new THREE.Scene();
+      scene = new THREE.Scene();
     },
     /** 初始化相机 */
     initCamera() {
@@ -55,9 +57,9 @@ export default {
       this.camera.position.y = 300;
       this.camera.position.z = 200;
       // 设置相机朝向
-      this.camera.lookAt(this.scene.position);
+      this.camera.lookAt(scene.position);
       // 放入场景
-      this.scene.add(this.camera);
+      scene.add(this.camera);
     },
     /** 初始化渲染器 */
     initRender() {
@@ -77,12 +79,12 @@ export default {
     initLight() {
       let ambient = new THREE.AmbientLight(0x66ccff, 1);
       ambient.position.set(0, 0, 0);
-      this.scene.add(ambient);
+      scene.add(ambient);
     },
     /** 初始化性能控件 */
     initStats() {
-      // this.stats = new Stats()
-      // document.body.appendChild(this.stats.dom)
+      // this.stats = new Stats();
+      // document.body.appendChild(this.stats.dom);
     },
     /** 初始化轨道控制器控件 */
     initControls() {
@@ -106,27 +108,27 @@ export default {
     /** 初始化坐标系控件 */
     initCoord() {
       var axes = new THREE.AxisHelper(100);
-      this.scene.add(axes);
+      scene.add(axes);
     },
     createMesh() {
       var geometry = new THREE.BoxGeometry(100, 100, 100); // 创建一个立方体几何对象Geometry
       var material = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
       }); // 材质对象Material
-      var mesh = new THREE.Mesh(geometry, material); // 网格模型对象Mesh
+      mesh = new THREE.Mesh(geometry, material); // 网格模型对象Mesh
       this.addObj(mesh); // 网格模型添加到场景中
       // frame.initControls();
     },
     /** 添加对象进场景 */
     addObj(obj) {
-      this.scene.add(obj);
+      scene.add(obj);
     },
     /** 渲染刷新 */
     renderFn: function () {
       requestAnimationFrame(this.renderFn);
       this.controls.update();
-      // this.stats.update();
-      this.renderer.render(this.scene, this.camera);
+      this.stats.update();
+      this.renderer.render(scene, this.camera);
     },
   },
 };
