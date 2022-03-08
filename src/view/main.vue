@@ -52,11 +52,12 @@ export default {
 .main {
   position: relative;
   display: flex;
+  width: 100%;
   height: 100%;
 }
 .routes {
   background: #1e2c30;
-  width: 200px;
+  min-width: 200px;
   padding: 10px;
   .route_type {
     /* display: flex; */
@@ -96,5 +97,6 @@ export default {
 article {
   flex: 1;
   padding: 20px;
+  overflow: auto;
 }
 </style>

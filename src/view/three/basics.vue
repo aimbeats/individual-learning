@@ -13,7 +13,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // import Stats from "three/examples/js/libs/stats.min.js";
-
 // import "three/examples/js/libs/fflate.min.js";
 var scene, mesh;
 export default {
@@ -127,7 +126,7 @@ export default {
     renderFn: function () {
       requestAnimationFrame(this.renderFn);
       this.controls.update();
-      this.stats.update();
+      // this.stats.update();
       this.renderer.render(scene, this.camera);
     },
   },
