@@ -1,0 +1,84 @@
+{
+    "model": [{
+        "meshObj": {
+            "type": "BoxGeometry",
+            "c": 3400,
+            "k": 1200,
+            "g": 1
+        },
+        "textureObj": {
+            "type": "MeshPhongMaterial",
+            "color": "#858585",
+            "opacity":0.9
+        },
+        "pos": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        }
+    },{
+        "meshObj": {
+            "type": "BoxGeometry",
+            "c": 3400,
+            "k": 1,
+            "g": 300
+        },
+        "textureObj": {
+            "type": "MeshPhongMaterial",
+            "color": "#858585"
+        },
+        "pos": {
+            "x": 0,
+            "y": 150,
+            "z": 600
+        }
+    },{
+        "meshObj": {
+            "type": "BoxGeometry",
+            "c": 3400,
+            "k": 1,
+            "g": 300
+        },
+        "textureObj": {
+            "type": "MeshPhongMaterial",
+            "color": "#858585"
+        },
+        "pos": {
+            "x": 0,
+            "y": 150,
+            "z": -600
+        }
+    },{
+        "meshObj": {
+            "type": "BoxGeometry",
+            "c": 1,
+            "k": 1200,
+            "g": 300
+        },
+        "textureObj": {
+            "type": "MeshPhongMaterial",
+            "color": "#858585"
+        },
+        "pos": {
+            "x": -1700,
+            "y": 150,
+            "z": 0
+        }
+    },{
+        "meshObj": {
+            "type": "BoxGeometry",
+            "c": 1,
+            "k": 1200,
+            "g": 300
+        },
+        "textureObj": {
+            "type": "MeshPhongMaterial",
+            "color": "#858585"
+        },
+        "pos": {
+            "x": 1700,
+            "y": 150,
+            "z": 0
+        }
+    }]
+}

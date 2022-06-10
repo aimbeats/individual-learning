@@ -1,6 +1,6 @@
 <!--
  * @Author: Hakuro
- * @Project: BSP组合
+ * @Project:工程文件主界面
  * @Description:
 -->
 <template>
@@ -11,26 +11,26 @@
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-const ThreeBSP = require("three-js-csg")(THREE);
+import axios from "axios"; // 引⽤axios
+// import ./
 var scene;
 export default {
-  name: "BasicsThree",
+  name: "mainIndex",
   data() {
     return {
-      // scene: null,
       camera: null,
-      renderer: null,
-      controls: null,
+      render: null,
+      controls: null, //轨道控制器
     };
   },
   mounted() {
-    this.initRender(); // 渲染器
     this.initScene(); // 场景
     this.initCamera(); // 相机
+    this.initRender(); // 渲染器
     this.initLight(); // 灯光
-    this.initControls(); // 轨道控制器
+    this.initControls(); //轨道控制器
+    this.initCreateMesh();
     this.initCoord(); // 坐标系
-    this.createMesh(); // 创建模型
     this.renderFn(); // 渲染刷新
   },
   methods: {
@@ -40,23 +40,22 @@ export default {
     },
     /** 初始化相机 */
     initCamera() {
-      // 透视投影相机
+      //PerspectiveCamera(fov,aspect,near,far)
+      //fov:代表着视角范围，比如人眼范围差不多接近180，一般游戏中是60到90度
+      //aspect:长宽比，如果画面只有一个画布全屏，那么它的宽高就是窗口宽高比
+      //near和far加起来是代表项目的渲染范围，near是起点,相机开始渲染的位置，太大的话离相机近的内容无法渲染；far是终点。
       this.camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight,
-        1,
-        1500
+        0.1,
+        10000
       );
-      // 设置相机位置
-      this.camera.position.x = -100;
-      this.camera.position.y = 600;
-      this.camera.position.z = 400;
-      // 设置相机朝向
-      this.camera.lookAt(scene.position);
-      // 放入场景
+      this.camera.position.x = 0;
+      this.camera.position.y = 1600;
+      this.camera.position.z = 1000;
+      this.camera.lookAt(0, 0, 0);
       scene.add(this.camera);
     },
-    /** 初始化渲染器 */
     initRender() {
       this.renderer = new THREE.WebGLRenderer({
         antialias: true, // 是否开启反锯齿，设置为true开启反锯齿。
@@ -64,17 +63,27 @@ export default {
         logarithmicDepthBuffer: true, // 模型的重叠部位便不停的闪烁起来。这便是Z-Fighting问题，为解决这个问题，我们可以采用该种方法
       });
       this.renderer.setSize(window.innerWidth, window.innerHeight); // 渲染器的尺寸与windows的尺寸相同
-      this.renderer.setClearColor(0x000000); // 设置渲染的背景颜色
+      this.renderer.setClearColor(0xffffff); // 设置渲染的背景颜色
       this.renderer.setPixelRatio(window.devicePixelRatio); // 设置渲染器的分辨率与浏览器电脑本身的分辨率相同
       // 将渲染器添加到我们的网页中，可以将渲染的内容在网页中显示出来
       let container = document.getElementById("container");
       container.appendChild(this.renderer.domElement);
     },
-    /** 初始化灯光 */
     initLight() {
       let ambient = new THREE.AmbientLight(0xffffff, 1);
       ambient.position.set(0, 0, 0);
       scene.add(ambient);
+      //设置平行光
+      let directiona = new THREE.DirectionalLight(0xffffff, 0.5);
+      directiona.position.set(5, 5, 5);
+      //开启平行光阴影
+      directiona.castShadow = true;
+      scene.add(directiona);
+    },
+    /** 初始化坐标系控件 */
+    initCoord() {
+      var axes = new THREE.AxisHelper(100);
+      scene.add(axes);
     },
     /** 初始化轨道控制器控件 */
     initControls() {
@@ -91,64 +100,54 @@ export default {
       // 设置相机距离原点的最近距离
       this.controls.minDistance = 200;
       // 设置相机距离原点的最远距离
-      this.controls.maxDistance = 1200;
+      // this.controls.maxDistance = 1200;
       // 是否开启右键拖拽
       this.controls.enablePan = true;
     },
-    /** 初始化坐标系控件 */
-    initCoord() {
-      var axes = new THREE.AxisHelper(100);
-      scene.add(axes);
+    /** 初始模型集合 */
+    initCreateMesh() {
+      axios.get("/modelList.json").then((res) => {
+        // console.log(res.data.model);
+        let list = res.data.model;
+        list.forEach((item) => {
+          console.log(item.meshObj, item.textureObj, item.pos);
+          this.createMesh(item.meshObj, item.textureObj, item.pos);
+        });
+      });
+      // let model = {
+      //   meshObj: {
+      //     type: "BoxGeometry",
+      //     c: 3400,
+      //     k: 1,
+      //     g: 1200,
+      //   },
+      //   textureObj: {
+      //     type: "MeshLambertMaterial",
+      //     color: 0x5f7480,
+      //   },
+      //   pos: {
+      //     x: 0,
+      //     y: 0,
+      //     z: 0,
+      //   },
+      // };
+      // this.createMesh(model.meshObj, model.textureObj, model.pos);
     },
-    /** 创建模型 */
-    createMesh() {
-      for (let i = 0; i < 4; i++) {
-        var meshBox,
-          meshCy,
-          meshRest,
-          boxGeometry = new THREE.BoxGeometry(100, 100, 100), // 创建一个立方体几何对象Geometry
-          cyGeometry = new THREE.CylinderGeometry(100, 100, 100), // 创建一个圆柱体几何对象Geometry
-          materialBox = new THREE.MeshLambertMaterial({
-            color: 0x0000ff,
-            wireframe: true, //网格模型以线条的模式渲染
-          }), // 材质对象Material
-          materialCy = new THREE.MeshLambertMaterial({
-            color: 0xfff000,
-            wireframe: true, //网格模型以线条的模式渲染
-          }); // 材质对象Material
-        meshBox = new THREE.Mesh(boxGeometry, materialBox); // 网格模型对象Mesh
-        meshBox.position.set(i * 300 - 350, 0, 0);
-        meshCy = new THREE.Mesh(cyGeometry, materialCy); // 网格模型对象Mesh
-        meshCy.position.set(i * 300 - 450, 0, 0);
-        //subtract:差集，union:交集，intersect：并集
-        var bspBox = new ThreeBSP(meshBox),
-          bspCy = new ThreeBSP(meshCy),
-          bspRest;
-        switch (i) {
-          case 0:
-            this.addObj(meshBox); // 网格模型添加到场景中
-            this.addObj(meshCy); // 网格模型添加到场景中
-            break;
-          case 1:
-            bspRest = bspCy.subtract(bspBox);
-            break;
-          case 2:
-            bspRest = bspCy.union(bspBox);
-            break;
-          case 3:
-            bspRest = bspCy.intersect(bspBox);
-            break;
-          default:
-            break;
-        }
-        if (i !== 0) {
-          meshRest = bspRest.toMesh();
-          meshRest.material = materialBox;
-          this.addObj(meshRest); // 网格模型添加到场景中
-        }
-      }
+    /**
+     * 创建模型
+     * @param meshObj 模型种类
+     * @param textureObj 材质对象
+     * @param pos 位置信息
+     */
+    createMesh(meshObj, textureObj, pos) {
+      let geometry = new THREE[meshObj.type](meshObj.c, meshObj.g, meshObj.k);
+      let material = new THREE[textureObj.type]({
+        ...textureObj,
+      }); // 材质对象Material
+      let mesh = new THREE.Mesh(geometry, material); // 网格模型对象Mesh
+      mesh.position.set(pos.x, pos.y, pos.z);
+      this.addObj(mesh); // 网格模型添加到场景中
     },
-    /** 添加对象进场景 */
     addObj(obj) {
       scene.add(obj);
     },
@@ -161,5 +160,3 @@ export default {
   },
 };
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>

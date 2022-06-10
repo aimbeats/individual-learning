@@ -1,6 +1,6 @@
 <!--
  * @Author: Hakuro
- * @Project: BSP组合
+ * @Project: 材质
  * @Description:
 -->
 <template>
@@ -11,7 +11,6 @@
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-const ThreeBSP = require("three-js-csg")(THREE);
 var scene;
 export default {
   name: "BasicsThree",
@@ -74,6 +73,8 @@ export default {
     initLight() {
       let ambient = new THREE.AmbientLight(0xffffff, 1);
       ambient.position.set(0, 0, 0);
+      let directiona = new THREE.DirectionalLight(0xffffff, 0.5);
+      scene.add(directiona);
       scene.add(ambient);
     },
     /** 初始化轨道控制器控件 */
@@ -103,49 +104,40 @@ export default {
     /** 创建模型 */
     createMesh() {
       for (let i = 0; i < 4; i++) {
-        var meshBox,
-          meshCy,
-          meshRest,
-          boxGeometry = new THREE.BoxGeometry(100, 100, 100), // 创建一个立方体几何对象Geometry
-          cyGeometry = new THREE.CylinderGeometry(100, 100, 100), // 创建一个圆柱体几何对象Geometry
-          materialBox = new THREE.MeshLambertMaterial({
-            color: 0x0000ff,
-            wireframe: true, //网格模型以线条的模式渲染
-          }), // 材质对象Material
-          materialCy = new THREE.MeshLambertMaterial({
-            color: 0xfff000,
-            wireframe: true, //网格模型以线条的模式渲染
-          }); // 材质对象Material
-        meshBox = new THREE.Mesh(boxGeometry, materialBox); // 网格模型对象Mesh
-        meshBox.position.set(i * 300 - 350, 0, 0);
-        meshCy = new THREE.Mesh(cyGeometry, materialCy); // 网格模型对象Mesh
-        meshCy.position.set(i * 300 - 450, 0, 0);
-        //subtract:差集，union:交集，intersect：并集
-        var bspBox = new ThreeBSP(meshBox),
-          bspCy = new ThreeBSP(meshCy),
-          bspRest;
+        let meshBox,
+          boxGeometry = new THREE.SphereGeometry(100, 25, 25), // 创建一个立方体几何对象Geometry
+          materialBox = null;
         switch (i) {
           case 0:
-            this.addObj(meshBox); // 网格模型添加到场景中
-            this.addObj(meshCy); // 网格模型添加到场景中
+            //点材质
+            materialBox = new THREE.PointsMaterial({
+              color: "#66ccff",
+              size: 20,
+            }); // 材质对象Material
             break;
           case 1:
-            bspRest = bspCy.subtract(bspBox);
+            materialBox = new THREE.MeshLambertMaterial({
+              color: "#66ccff",
+            });
             break;
           case 2:
-            bspRest = bspCy.union(bspBox);
+            materialBox = new THREE.MeshPhongMaterial({
+              color: "#66ccff",
+              // wireframe: true, //网格模型以线条的模式渲染
+            }); // 材质对象Material
             break;
           case 3:
-            bspRest = bspCy.intersect(bspBox);
+            materialBox = new THREE.MeshStandardMaterial({
+              color: "#66ccff",
+              // wireframe: true, //网格模型以线条的模式渲染
+            }); // 材质对象Material
             break;
           default:
             break;
         }
-        if (i !== 0) {
-          meshRest = bspRest.toMesh();
-          meshRest.material = materialBox;
-          this.addObj(meshRest); // 网格模型添加到场景中
-        }
+        meshBox = new THREE.Mesh(boxGeometry, materialBox); // 网格模型对象Mesh
+        meshBox.position.set(i * 300 - 350, 0, 0);
+        this.addObj(meshBox); // 网格模型添加到场景中
       }
     },
     /** 添加对象进场景 */
